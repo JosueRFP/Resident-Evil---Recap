@@ -29,7 +29,7 @@ public class CameraController : MonoBehaviour
     float mouseY;
     float offsetDistanceY;
 
-    Transform player;
+     Transform player;
 
     void Start()
     {
