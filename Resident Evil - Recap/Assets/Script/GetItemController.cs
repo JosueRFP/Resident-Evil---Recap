@@ -1,51 +1,106 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Events;
 
 public class GetItemController : MonoBehaviour
 {
-    [SerializeField] private float pickUpDistance;
-    [SerializeField] private LayerMask itemLayer;
-    [SerializeField] private Transform holdPoint;
+    [Header("Hold Points (Front, Back, Left, Right)")]
+    [SerializeField] private Transform[] holdPoints;
 
-    Transform currentItem;
+    private int currentHoldIndex = 0;
 
-    private void Update()
+    private GameObject carriedTrash;
+    private GameObject itemDetected;
+    private GameObject depositDetected;
+
+    [SerializeField] UnityEvent OnGetTrashSound;
+
+    public bool IsCarryingTrash { get; private set; }
+
+    void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            if(currentItem == null)
-            TryPickUpObj();
+            if (itemDetected != null && carriedTrash == null)
+            {
+                PickUpItem(itemDetected);
+                OnGetTrashSound.Invoke();
+            }
+            else if (depositDetected != null && carriedTrash != null)
+            {
+                DeliverItem();
+            }
         }
+
+        if (Input.GetKeyDown(KeyCode.R) && carriedTrash != null)
+            CycleHoldPoint();
+
+        if (Input.GetKeyDown(KeyCode.Q) && carriedTrash != null)
+            DropItem();
     }
 
-    public void TryPickUpObj()
+    void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
+        if (hit.gameObject.CompareTag("Item"))
+            itemDetected = hit.gameObject;
 
-        Debug.DrawLine(ray.origin, ray.direction * pickUpDistance, Color.green, 1f);
-        if (Physics.Raycast(ray, out hit, pickUpDistance, itemLayer))
-        {
-            PickUp(hit.transform);
-            
-        }
-           
+        if (hit.gameObject.CompareTag("Deposit"))
+            depositDetected = hit.gameObject;
     }
 
-    void PickUp(Transform item)
+    void OnTriggerExit(Collider other)
     {
-        currentItem = item;
-        item.SetParent(currentItem);
+        if (other.gameObject == itemDetected)
+            itemDetected = null;
 
-        item.localPosition = Vector3.zero;
-        item.localRotation = Quaternion.identity;
-
-        Rigidbody rb = item.GetComponent<Rigidbody>();
-        if (rb) rb.isKinematic = true;
-
-        Collider collider = item.GetComponent<Collider>();
-        if(collider) collider.enabled = false;
-
-        print("Item"); 
+        if (other.gameObject == depositDetected)
+            depositDetected = null;
     }
 
+    void PickUpItem(GameObject trash)
+    {
+        carriedTrash = trash;
+
+        carriedTrash.transform.SetParent(holdPoints[currentHoldIndex]);
+        carriedTrash.transform.localPosition = Vector3.zero;
+        carriedTrash.transform.localRotation = Quaternion.identity;
+
+        Rigidbody rb = carriedTrash.GetComponent<Rigidbody>();
+        if (rb != null) rb.isKinematic = true;
+
+        Collider col = carriedTrash.GetComponent<Collider>();
+        if (col != null) col.isTrigger = true;
+
+        IsCarryingTrash = true;
+    }
+
+    void DropItem()
+    {
+        carriedTrash.transform.SetParent(null);
+
+        Rigidbody rb = carriedTrash.GetComponent<Rigidbody>();
+        if (rb != null) rb.isKinematic = false;
+
+        Collider col = carriedTrash.GetComponent<Collider>();
+        if (col != null) col.isTrigger = false;
+
+        carriedTrash = null;
+        IsCarryingTrash = false;
+    }
+
+    void DeliverItem()
+    {
+        Destroy(carriedTrash);
+        carriedTrash = null;
+        IsCarryingTrash = false;
+
+        print("Trash delivered!");
+    }
+
+    void CycleHoldPoint()
+    {
+        currentHoldIndex = (currentHoldIndex + 1) % holdPoints.Length;
+        carriedTrash.transform.SetParent(holdPoints[currentHoldIndex]);
+        carriedTrash.transform.localPosition = Vector3.zero;
+        carriedTrash.transform.localRotation = Quaternion.identity;
+    }
 }
