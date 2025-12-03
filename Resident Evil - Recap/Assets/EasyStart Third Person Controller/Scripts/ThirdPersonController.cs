@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /*
     This file has a commented version with details about how each line works. 
@@ -62,11 +64,10 @@ public class ThirdPersonController : MonoBehaviour
         // Input checkers
         inputHorizontal = Input.GetAxis("Horizontal");
         inputVertical = Input.GetAxis("Vertical");
-        inputJump = Input.GetAxis("Jump") == 1f;
+        inputJump = Input.GetButtonDown("Jump");
         inputSprint = Input.GetAxis("Fire3") == 1f;
         // Unfortunately GetAxis does not work with GetKeyDown, so inputs must be taken individually
         inputCrouch = Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.JoystickButton1);
-
         // Check if you pressed the crouch input key and change the player's state
         if ( inputCrouch )
             isCrouching = !isCrouching;
@@ -195,4 +196,9 @@ public class ThirdPersonController : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Dieble"))
+            SceneManager.LoadScene(0);
+    }
 }
