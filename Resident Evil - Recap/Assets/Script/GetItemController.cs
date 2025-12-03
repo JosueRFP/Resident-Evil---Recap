@@ -93,7 +93,7 @@ public class GetItemController : MonoBehaviour
         carriedTrash = null;
         IsCarryingTrash = false;
 
-        print("Trash delivered!");
+        print("Passou!");
     }
 
     void CycleHoldPoint()
