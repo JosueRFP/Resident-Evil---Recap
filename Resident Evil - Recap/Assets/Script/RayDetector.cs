@@ -1,14 +1,16 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class RayDetector : MonoBehaviour
 {
-    [SerializeField] Image image;
+    [SerializeField] GameObject image;
+    [SerializeField] UnityEvent OnEnter;
+    [SerializeField] UnityEvent OnExit;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        image.enabled = false;
-        image = GetComponent<Image>();
+       image.SetActive(false);  
     }
 
     // Update is called once per frame
@@ -21,7 +23,20 @@ public class RayDetector : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            image.enabled = true;
+            print("Colidiu com o jogador");
+            OnEnter.Invoke();
+            image.SetActive(true);
+            
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            print("Saiu da colisao com o jogador");
+            OnExit.Invoke();
+            image.SetActive(false);
         }
     }
 }

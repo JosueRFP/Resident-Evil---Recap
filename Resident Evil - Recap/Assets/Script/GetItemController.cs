@@ -62,7 +62,10 @@ public class GetItemController : MonoBehaviour
     void OnTriggerExit(Collider other)
     {
         if (other.gameObject == itemDetected)
+        {
             itemDetected = null;
+            OnGetTrashOff.Invoke();
+        }
 
         if (other.gameObject == depositDetected)
             depositDetected = null;
@@ -87,6 +90,7 @@ public class GetItemController : MonoBehaviour
 
     void DropItem()
     {
+
         carriedTrash.transform.SetParent(null);
 
         Rigidbody rb = carriedTrash.GetComponent<Rigidbody>();
