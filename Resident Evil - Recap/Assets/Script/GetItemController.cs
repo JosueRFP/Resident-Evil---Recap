@@ -12,7 +12,10 @@ public class GetItemController : MonoBehaviour
     private GameObject itemDetected;
     private GameObject depositDetected;
 
-    [SerializeField] UnityEvent OnGetTrashSound;
+    [SerializeField] UnityEvent OnGetTrash;
+    [SerializeField] UnityEvent OnGetTrashOff;
+    [SerializeField] UnityEvent OnDropTrash;
+    [SerializeField] UnityEvent OnDropTrashOff;
 
     public bool IsCarryingTrash { get; private set; }
 
@@ -23,7 +26,8 @@ public class GetItemController : MonoBehaviour
             if (itemDetected != null && carriedTrash == null)
             {
                 PickUpItem(itemDetected);
-                OnGetTrashSound.Invoke();
+                OnDropTrash.Invoke();
+                
             }
             else if (depositDetected != null && carriedTrash != null)
             {
@@ -35,13 +39,21 @@ public class GetItemController : MonoBehaviour
             CycleHoldPoint();
 
         if (Input.GetKeyDown(KeyCode.Q) && carriedTrash != null)
+        {
+            OnDropTrashOff.Invoke();
             DropItem();
+
+        }
     }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.gameObject.CompareTag("Item"))
+        {
             itemDetected = hit.gameObject;
+            OnGetTrash.Invoke();
+        }
+        
 
         if (hit.gameObject.CompareTag("Deposit"))
             depositDetected = hit.gameObject;
