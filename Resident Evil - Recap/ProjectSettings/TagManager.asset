@@ -7,8 +7,7 @@ TagManager:
   - Item
   - Deposit
   - Dieble
-  - Explode
-  - Kaboom
+  - Sheep
   layers:
   - Default
   - TransparentFX

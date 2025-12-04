@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,7 +45,7 @@ public class ThirdPersonController : MonoBehaviour
 
     Animator animator;
     CharacterController cc;
-
+    [SerializeField] GameObject diePainel;
 
     void Start()
     {
@@ -199,6 +200,17 @@ public class ThirdPersonController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Dieble"))
-            SceneManager.LoadScene(0);
+        {
+            diePainel.SetActive(true);
+            StartCoroutine(LosePhase());
+        }
+    }
+
+    IEnumerator LosePhase()
+    {
+        diePainel.SetActive(true);
+        yield return new WaitForSeconds(5f);
+        SceneManager.LoadScene(0);
+        print("You Lose");
     }
 }

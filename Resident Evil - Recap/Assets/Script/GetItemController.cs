@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class GetItemController : MonoBehaviour
@@ -17,8 +18,17 @@ public class GetItemController : MonoBehaviour
     [SerializeField] UnityEvent OnDropTrash;
     [SerializeField] UnityEvent OnDropTrashOff;
     [SerializeField] UnityEvent OnKaboom;
+    [SerializeField] GameObject winPainel;
 
     public bool IsCarryingTrash { get; private set; }
+
+
+
+    private void Start()
+    {
+        winPainel.SetActive(false);
+    }   
+
 
     void Update()
     {
@@ -32,6 +42,7 @@ public class GetItemController : MonoBehaviour
             }
             else if (depositDetected != null && carriedTrash != null)
             {
+                StartCoroutine(WinGame());
                 DeliverItem();
             }
         }
@@ -54,7 +65,13 @@ public class GetItemController : MonoBehaviour
             itemDetected = hit.gameObject;
             OnGetTrash.Invoke();
         }
-        
+
+        if (hit.gameObject.CompareTag("Sheep"))
+        {
+            itemDetected = hit.gameObject;
+        }
+            
+
 
         if (hit.gameObject.CompareTag("Deposit"))
         {
@@ -126,4 +143,15 @@ public class GetItemController : MonoBehaviour
         carriedTrash.transform.localPosition = Vector3.zero;
         carriedTrash.transform.localRotation = Quaternion.identity;
     }
+
+
+    IEnumerator WinGame()
+    {
+        winPainel.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        Application.Quit();
+        print("You Win");
+    }
+
+
 }
