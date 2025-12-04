@@ -16,6 +16,7 @@ public class GetItemController : MonoBehaviour
     [SerializeField] UnityEvent OnGetTrashOff;
     [SerializeField] UnityEvent OnDropTrash;
     [SerializeField] UnityEvent OnDropTrashOff;
+    [SerializeField] UnityEvent OnKaboom;
 
     public bool IsCarryingTrash { get; private set; }
 
@@ -56,7 +57,14 @@ public class GetItemController : MonoBehaviour
         
 
         if (hit.gameObject.CompareTag("Deposit"))
+        {
             depositDetected = hit.gameObject;
+            OnKaboom.Invoke();
+
+
+        }
+
+
     }
 
     void OnTriggerExit(Collider other)
@@ -109,7 +117,6 @@ public class GetItemController : MonoBehaviour
         carriedTrash = null;
         IsCarryingTrash = false;
 
-        print("Passou!");
     }
 
     void CycleHoldPoint()

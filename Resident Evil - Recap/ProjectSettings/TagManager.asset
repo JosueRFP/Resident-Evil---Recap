@@ -6,8 +6,9 @@ TagManager:
   tags:
   - Item
   - Deposit
-  - Destroyable
   - Dieble
+  - Explode
+  - Kaboom
   layers:
   - Default
   - TransparentFX
