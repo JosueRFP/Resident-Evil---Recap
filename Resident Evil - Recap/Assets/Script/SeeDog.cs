@@ -1,26 +1,25 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 
 public class SeeDog : MonoBehaviour
 {
     [SerializeField] Transform target;
     [SerializeField] float speed = 3f;
+    [SerializeField] Image image;
 
     bool chasing = false;
 
     void Update()
     {
-        transform.Rotate(0, 50 * Time.deltaTime, 0);
+        transform.Rotate(0, 50  * Time.deltaTime, 0);
 
         if (chasing)
         {
-            transform.position = Vector3.MoveTowards(
-                transform.position,
-                target.position,
-                speed * Time.deltaTime
-            );
+            transform.position = Vector3.MoveTowards(transform.position, target.position,speed * Time.deltaTime);
         }
     }
 
@@ -29,16 +28,11 @@ public class SeeDog : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             print("Dog see Player");
+            image.color = Color.red;
             chasing = true;
         }
     }
 
-    private void OnTriggerStay(Collider collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            SceneManager.LoadScene(0);
-        }
-    }
+   
 }
 

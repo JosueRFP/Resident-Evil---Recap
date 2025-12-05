@@ -2,7 +2,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class RayDetector : MonoBehaviour
+
+public class RayYellow : MonoBehaviour
 {
     [SerializeField] Image image;
     [SerializeField] UnityEvent OnEnter;
@@ -16,17 +17,17 @@ public class RayDetector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            image.color = Color.green;
+            image.color = Color.yellow;
             OnEnter.Invoke();
             image.enabled = true;
-            
+
         }
     }
 
